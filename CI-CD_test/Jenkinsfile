@@ -1,62 +1,34 @@
-
-
 pipeline {
-    agent any   
-
+    agent any
     environment {
-        IMAGE_NAME = 'ci-cd-test'   //Имя докер-контейнера, -образа.
         DOCKER_IMAGE = 'ci-cd-test:latest'
-        PORT = '8080' 
     }
-
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'develop', url: 'https://github.com/Ophelia145/Avs_Corsework.git'  // Клонируем ветку с репозитория
+                checkout scm
             }
         }
-
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build -t ${DOCKER_IMAGE} ."  //Собираем докер-образ
+                    //строим Docker-образ
+                    sh 'docker build -t ${DOCKER_IMAGE} .'
                 }
             }
         }
-
         stage('Deploy Docker Container') {
             steps {
                 script {
-                    //проверяем запущен ли контейнер, описанный в переменных окружения
-                    // и если запущен,тогда останавливаем и удаляем 
-                    sh """
-                        if [ \$(docker ps -aq -f name=${IMAGE_NAME}) ]; then
-                            docker stop ${IMAGE_NAME}
-                            docker rm ${IMAGE_NAME}
-                        fi
-                    """
-                    // Проверяем занят ли порт и еслион занят,
-                    // тогда заершаем процессф на порту
-                    sh """
-                        if ss -tuln | grep :${PORT}; then
-                            echo "Port ${PORT} is in use. Freeing it..."
-                            fuser -k ${PORT}/tcp || true
-                        fi
-                    """
-                    // Запускаем новый контейнер, пробрасывает порт 8181 на порт 80 внутри контейнера
-                    // и указыавем имя образа
-                    sh "docker run -d --name ${IMAGE_NAME} -p 8181:80 ${DOCKER_IMAGE}"
+                    //разворачиваем Docker-контейнер
+                    sh 'docker run -d -p 8080:8080 ${DOCKER_IMAGE}'
                 }
             }
         }
     }
-
-    post {  // Описание вывдимых сообщений в случае успешного/неуспешного выполнения пайплайна.
-        success {
-            echo 'Deployment completed successfully!'
-        }
-        failure {
-            echo 'Deployment failed. Check logs for details.'
+    post {
+        always {
+            echo 'Pipeline finished'
         }
     }
 }
