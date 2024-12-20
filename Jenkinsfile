@@ -21,6 +21,7 @@ pipeline {
         sh 'docker build -t my-image .'
         echo 'После команды Docker'
     }
+        }
 
 
 
