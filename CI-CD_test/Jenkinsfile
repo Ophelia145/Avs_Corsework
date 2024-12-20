@@ -1,59 +1,62 @@
+
+
 pipeline {
-    agent any 
+    agent any   
 
     environment {
-        DOCKER_IMAGE = 'ci-cd_test_app'
-        DOCKER_TAG = 'latest'
+        IMAGE_NAME = 'ci-cd-test'   //Имя докер-контейнера, -образа.
+        DOCKER_IMAGE = 'ci-cd-test:latest'
+        PORT = '8080' 
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'develop', url: 'https://github.com/Ophelia145/Avs_Corsework.git'  // Клонируем ветку с репозитория
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
-                    
-                    docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
+                    sh "docker build -t ${DOCKER_IMAGE} ."  //Собираем докер-образ
                 }
             }
         }
 
-
-        stage('Deploy') {
+        stage('Deploy Docker Container') {
             steps {
                 script {
-                    docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-d')
+                    //проверяем запущен ли контейнер, описанный в переменных окружения
+                    // и если запущен,тогда останавливаем и удаляем 
+                    sh """
+                        if [ \$(docker ps -aq -f name=${IMAGE_NAME}) ]; then
+                            docker stop ${IMAGE_NAME}
+                            docker rm ${IMAGE_NAME}
+                        fi
+                    """
+                    // Проверяем занят ли порт и еслион занят,
+                    // тогда заершаем процессф на порту
+                    sh """
+                        if ss -tuln | grep :${PORT}; then
+                            echo "Port ${PORT} is in use. Freeing it..."
+                            fuser -k ${PORT}/tcp || true
+                        fi
+                    """
+                    // Запускаем новый контейнер, пробрасывает порт 8181 на порт 80 внутри контейнера
+                    // и указыавем имя образа
+                    sh "docker run -d --name ${IMAGE_NAME} -p 8181:80 ${DOCKER_IMAGE}"
                 }
             }
         }
     }
 
-      post {
-        always {
-            script {
-                echo 'Jenkins is cleaning up...after me ehhh'
-
-                try {
-                    def containers = sh(script: "docker ps -q --filter 'name=${DOCKER_IMAGE}'", returnStdout: true).trim()
-                    if (containers) {
-                        echo "Stopping containers: ${containers}"
-                        sh "docker stop ${containers}"
-                    }
-                } catch (Exception e) {
-                    echo "No running containers to stop."
-                }
-
-                try {
-                    def containers = sh(script: "docker ps -a -q --filter 'name=${DOCKER_IMAGE}'", returnStdout: true).trim()
-                    if (containers) {
-                        echo "Removing containers: ${containers}"
-                        sh "docker rm ${containers}"
-                    }
-                } catch (Exception e) {
-                    echo "No containers to remove."
-                }
-
-                echo "Removing Docker images..."
-                //sh "docker rmi ${DOCKER_IMAGE}:${DOCKER_TAG} || true" //only if exists
-            }
+    post {  // Описание вывдимых сообщений в случае успешного/неуспешного выполнения пайплайна.
+        success {
+            echo 'Deployment completed successfully!'
+        }
+        failure {
+            echo 'Deployment failed. Check logs for details.'
         }
     }
 }
