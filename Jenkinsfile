@@ -15,6 +15,13 @@ pipeline {
                 }
             }
         }
+        stage('Test') {
+    steps {
+        echo 'До команды Docker'
+        sh 'docker build -t my-image .'
+        echo 'После команды Docker'
+    }
+
 
 
         stage('Deploy') {
