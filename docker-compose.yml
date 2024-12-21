@@ -15,10 +15,10 @@ services:
   app:
     build:
       context: .
-    container_name: my_ci_cd
+    container_name: my-app
     volumes:
       - ./app:/app
-    command: [ "./test" ] # Если файл 'test' скомпилирован
+    command: [ "./test" ]
     depends_on:
       - jenkins
 
