@@ -2,7 +2,7 @@ pipeline {
     agent any 
     environment {
         DOCKER_IMAGE = 'ci-cd_test_app'
-        DOCKER_TAG = 'dind'
+        DOCKER_TAG = 'latest'
     }
     stages {
         stage('Build Docker Image') {
@@ -19,8 +19,7 @@ pipeline {
             steps {
                 script {
                     //docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-d')
-                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock \
-           dind"
+                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock ${DOCKER_IMAGE}"
                 }
             }
         }
