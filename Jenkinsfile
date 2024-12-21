@@ -8,7 +8,9 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                   // sh "docker buld /var/run/docker.sock:/var/run/docker.sock \
+           // docker"
+                   // sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                     //docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
                 }
             }
@@ -16,7 +18,9 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-d')
+                    //docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-d')
+                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock \
+           -ti docker"
                 }
             }
         }
