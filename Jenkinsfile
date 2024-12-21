@@ -1,14 +1,14 @@
 pipeline {
     agent any 
     environment {
-        DOCKER_IMAGE = 'my-app'
-        DOCKER_TAG = 'latest'
+        DOCKER_IMAGE = 'jenkins/jenkins'
+        DOCKER_TAG = 'lts'
     }
     stages {
         stage('Build Docker Image') {
             steps {
                 script {
-                   sh "docker build ${DOCKER_IMAGE}"
+                   sh "docker build ${DOCKER_IMAGE}:${DOCKER_TAG}"
            // docker"
                    // sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                     //docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
@@ -19,7 +19,7 @@ pipeline {
             steps {
                 script {
                     //docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").run('-d')
-                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock ${DOCKER_IMAGE}"
+                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock ${DOCKER_IMAGE}:${DOCKER_TAG}"
                 }
             }
         }
