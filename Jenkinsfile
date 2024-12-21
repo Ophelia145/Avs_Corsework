@@ -1,14 +1,14 @@
 pipeline {
     agent any 
     environment {
-        DOCKER_IMAGE = 'ci_cd_test_app'
+        DOCKER_IMAGE = 'ci-cd_test_app'
         DOCKER_TAG = 'latest'
     }
     stages {
         stage('Build Docker Image') {
             steps {
                 script {
-                   sh "docker build -t ${DOCKER_IMAGE}"
+                   sh "docker build ${DOCKER_IMAGE}"
            // docker"
                    // sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                     //docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
