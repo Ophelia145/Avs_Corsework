@@ -1,7 +1,7 @@
 pipeline {
     agent any 
     environment {
-        DOCKER_IMAGE = '2244b60c08cd'
+        DOCKER_IMAGE = 'jenkins'
         DOCKER_TAG = 'latest'
     }
     stages {
