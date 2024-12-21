@@ -1,6 +1,9 @@
-FROM gcc:latest
-
-COPY test.cpp /app/test.cpp
-
+FROM gcc:latest AS builder
 WORKDIR /app
-CMD ["g++","test.cpp", "-o", "test"]
+COPY . .
+RUN g++ test.cpp -o test
+FROM gcc:latest
+WORKDIR /app
+COPY --from=builder /app/test /app/
+COPY . .
+CMD ["./test"]

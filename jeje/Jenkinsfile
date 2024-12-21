@@ -5,16 +5,14 @@ pipeline {
             steps {
                 script {
                    sh 'docker build -t imagination .'
-           // docker"
-                   // sh "docker build -t imagination:${DOCKER_TAG} ."
-                    //docker.build("imagination:${DOCKER_TAG}")
+
                 }
             }
         }
         stage('Deploy') {
             steps {
                 script {
-                    //docker.image("imagination:${DOCKER_TAG}").run('-d')
+                    
                     sh "docker run --rm imagination ."
                 }
             }
