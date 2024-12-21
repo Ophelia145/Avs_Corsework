@@ -16,7 +16,7 @@ services:
     privileged: true # Это важно для использования Docker внутри контейнера
 
   docker:
-    image: docker:latest
+    image: docker:dind
     container_name: docker
     networks:
       - jenkins_network
