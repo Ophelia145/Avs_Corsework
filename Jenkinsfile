@@ -1,7 +1,7 @@
 pipeline {
     agent any 
     environment {
-        DOCKER_IMAGE = 'Avs_Corsework'
+        DOCKER_IMAGE = 'Dockerfile'
         DOCKER_TAG = 'latest'
     }
     stages {
