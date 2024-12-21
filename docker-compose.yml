@@ -15,7 +15,7 @@ services:
   app:
     build:
       context: .
-    container_name: app-container
+    container_name: my_ci_cd
     volumes:
       - ./app:/app
     command: [ "./test" ] # Если файл 'test' скомпилирован
