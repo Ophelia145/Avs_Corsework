@@ -1,7 +1,7 @@
 pipeline {
     agent any 
     environment {
-        DOCKER_IMAGE = 'ci-cd_test_app'
+        DOCKER_IMAGE = 'ci_cd_test_app'
         DOCKER_TAG = 'latest'
     }
     stages {
