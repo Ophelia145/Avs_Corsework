@@ -1,4 +1,5 @@
-version: '3'
+version: '3.8'
+
 services:
   jenkins:
     image: jenkins/jenkins:lts
@@ -8,24 +9,18 @@ services:
       - "50000:50000"
     volumes:
       - jenkins_home:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
-    # environment:
-    #   - DOCKER_HOST=tcp://docker:2375
-    networks:
-      - jenkins_network
-    privileged: true # Это важно для использования Docker внутри контейнера
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
 
-  docker:
-    image: docker:dind
-    container_name: docker
-    networks:
-      - jenkins_network
-    privileged: true
+  app:
+    build:
+      context: .
+    container_name: app-container
+    volumes:
+      - ./app:/app
+    command: [ "./test" ] # Если файл 'test' скомпилирован
+    depends_on:
+      - jenkins
 
 volumes:
   jenkins_home:
-
-
-networks:
-  jenkins_network:
-    driver: bridge
