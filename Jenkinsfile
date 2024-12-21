@@ -1,14 +1,14 @@
 pipeline {
     agent any 
     environment {
-        DOCKER_IMAGE = 'jenkins'
+        DOCKER_IMAGE = 'my_ci_cd'
         DOCKER_TAG = 'latest'
     }
     stages {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh "docker build ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                     //docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
                 }
             }
