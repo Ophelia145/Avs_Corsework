@@ -1,7 +1,6 @@
 FROM gcc:latest
+
+COPY test.cpp /app/test.cpp
+
 WORKDIR /app
-COPY . .
-
-RUN g++ test.cpp -o test
-
-CMD ["./test"]
+CMD ["g++","test.cpp", "-o", "test"]
